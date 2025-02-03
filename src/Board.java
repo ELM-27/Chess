@@ -19,6 +19,8 @@ public class Board {
     private Piece[] black = new Piece[8];
     private Piece[] blackPawn = new Piece[8];
 
+    private Piece movingPiece = null;
+
     public Board() {
         board = buildBoard();
     }
@@ -31,6 +33,24 @@ public class Board {
 
             System.out.println();
         }
+    }
+
+    public void readPiece(String move) {
+        Piece movePiece;
+        int file;
+        char fileChar;
+        int rank;
+        char rankChar;
+
+        fileChar = move.charAt(0);
+        rankChar = move.charAt(1);
+
+        file = fileChar - 96;
+        rank = rankChar - 48;
+
+        movingPiece = board[rank][file];
+
+        System.out.println(movingPiece.toString());
     }
 
     private Piece[][] buildBoard() {

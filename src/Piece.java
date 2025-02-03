@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class Piece {
 
     private int locX;
@@ -47,5 +50,32 @@ public class Piece {
         } else {
             return ' ';
         }
+    }
+
+    @Override
+    public String toString() {
+        String returnString = "";
+
+        if(!color) {
+            returnString.concat("White ");
+        } else {
+            returnString.concat("Black ");
+        }
+
+        if (type == 4) {
+            returnString.concat("King");
+        } else if (type == 3) {
+            returnString.concat("Queen");
+        } else if (type == 0 || type == 7) {
+            returnString.concat("Rook");
+        } else if (type == 2 || type == 5) {
+            returnString.concat("Bishop");
+        } else if (type == 1 || type == 6) {
+            returnString.concat("Knight");
+        } else if (type == 8) {
+            returnString.concat("Pawn");
+        }
+
+        return returnString;
     }
 }
