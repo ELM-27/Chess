@@ -45,8 +45,8 @@ public class Board {
         fileChar = move.charAt(0);
         rankChar = move.charAt(1);
 
-        file = fileChar - 96;
-        rank = rankChar - 48;
+        file = fileChar - 97;
+        rank = rankChar - 49;
 
         movingPiece = board[rank][file];
 
