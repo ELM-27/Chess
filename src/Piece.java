@@ -1,5 +1,3 @@
-import java.util.*;
-import java.io.*;
 
 public class Piece {
 
@@ -34,22 +32,58 @@ public class Piece {
             return ' ';
         }
     }
+
     public char getPiece() {
-        if (type == 4) {
-            return 'K';
-        } else if (type == 3) {
-            return 'Q';
-        } else if (type == 0 || type == 7) {
-            return 'R';
-        } else if (type == 2 || type == 5) {
-            return 'B';
-        } else if (type == 1 || type == 6) {
-            return 'N';
-        } else if (type == 8) {
-            return 'P';
-        } else {
-            return ' ';
+        switch (type) {
+            case 4:
+                return 'K';
+            case 3:
+                return 'Q';
+            case 0:
+            case 7:
+                return 'R';
+            case 2:
+            case 5:
+                return 'B';
+            case 1:
+            case 6:
+                return 'N';
+            case 8:
+                return 'P';
+            default:
+                return ' ';
         }
+    }
+
+    /*
+     * The following method gets all possible moves of a given piece and returns the moves
+     * as a string array, where each value is a specific move
+     * The end of the list is terminated by the string "end"
+     */
+    public String[] getMoves() {
+        String[] moveList = new String[26];
+        
+        moveList[0] = chessVector(locX, locY);
+        moveList[1] = "end";
+
+        return moveList;
+    }
+
+    /*
+     * This converts the 2-way array coordinates of the piece to chess coordinates
+     */
+    private String chessVector(int x, int y) {
+        String move = "";
+        char file;
+        int rank;
+
+        file = (char)(x + 97);
+        rank = 8 - y;
+
+        move = move.concat(Character.toString(file));
+        move = move.concat(Integer.toString(rank));
+
+        return move;
     }
 
     @Override
@@ -57,23 +91,35 @@ public class Piece {
         String returnString = "";
 
         if(!color) {
-            returnString.concat("White ");
+            returnString = returnString.concat("White ");
         } else {
-            returnString.concat("Black ");
+            returnString = returnString.concat("Black ");
         }
 
-        if (type == 4) {
-            returnString.concat("King");
-        } else if (type == 3) {
-            returnString.concat("Queen");
-        } else if (type == 0 || type == 7) {
-            returnString.concat("Rook");
-        } else if (type == 2 || type == 5) {
-            returnString.concat("Bishop");
-        } else if (type == 1 || type == 6) {
-            returnString.concat("Knight");
-        } else if (type == 8) {
-            returnString.concat("Pawn");
+        switch (type) {
+            case 4:
+                returnString = returnString.concat("King");
+                break;
+            case 3:
+                returnString = returnString.concat("Queen");
+                break;
+            case 0:
+            case 7:
+                returnString = returnString.concat("Rook");
+                break;
+            case 2:
+            case 5:
+                returnString = returnString.concat("Bishop");
+                break;
+            case 1:
+            case 6:
+                returnString = returnString.concat("Knight");
+                break;
+            case 8:
+                returnString = returnString.concat("Pawn");
+                break;
+            default:
+                break;
         }
 
         return returnString;
