@@ -46,8 +46,18 @@ public class Piece {
     }
 
     public void makeMove(int[] coordinates) {
+        if(Math.abs(locY - coordinates[0]) == 2 && type == 8) {
+            hasJustMoved = true;
+        }
+
         locX = coordinates[1];
         locY = coordinates[0];
+
+        hasMoved = true;
+    }
+
+    public void fixJustMoved() {
+        hasJustMoved = false;
     }
 
     public int getLocX() {
@@ -354,14 +364,19 @@ public class Piece {
                     }
 
                     // double move on first pawn move
-                    if(!hasMoved && board[locY + 2][locX].getPieceType() >= 0){
+                    if(!hasMoved && board[locY + 2][locX].getPieceType() < 0){
                         moveList[moveNum] = chessVector(locX, locY + 2);
                         moveNum++;
                     }
 
-                    // pawn capture checks
+                    // pawn capture checks (including en passant)
                     try{
                         if(board[locY + 1][locX + 1].getColorInt() != color && board[locY + 1][locX + 1].getPieceType() >= 0) {
+                            moveList[moveNum] = chessVector(locX + 1, locY + 1);
+                            moveNum++;
+                        }
+
+                        if(board[locY][locX + 1].getColorInt() != color && board[locY][locX + 1].enPassant()) {
                             moveList[moveNum] = chessVector(locX + 1, locY + 1);
                             moveNum++;
                         }
@@ -369,6 +384,11 @@ public class Piece {
 
                     try{
                         if(board[locY + 1][locX - 1].getColorInt() != color && board[locY + 1][locX - 1].getPieceType() >= 0) {
+                            moveList[moveNum] = chessVector(locX - 1, locY + 1);
+                            moveNum++;
+                        }
+
+                        if(board[locY][locX - 1].getColorInt() != color && board[locY][locX - 1].enPassant()) {
                             moveList[moveNum] = chessVector(locX - 1, locY + 1);
                             moveNum++;
                         }
@@ -392,10 +412,20 @@ public class Piece {
                             moveList[moveNum] = chessVector(locX + 1, locY - 1);
                             moveNum++;
                         }
+
+                        if(board[locY][locX + 1].getColorInt() != color && board[locY][locX + 1].enPassant()) {
+                            moveList[moveNum] = chessVector(locX + 1, locY - 1);
+                            moveNum++;
+                        }
                     } catch(ArrayIndexOutOfBoundsException e) {}
 
                     try{
                         if(board[locY - 1][locX - 1].getColorInt() != color && board[locY - 1][locX - 1].getPieceType() >= 0) {
+                            moveList[moveNum] = chessVector(locX - 1, locY - 1);
+                            moveNum++;
+                        }
+
+                        if(board[locY][locX - 1].getColorInt() != color && board[locY][locX - 1].enPassant()) {
                             moveList[moveNum] = chessVector(locX - 1, locY - 1);
                             moveNum++;
                         }

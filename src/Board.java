@@ -20,10 +20,27 @@ public class Board {
 
     private Piece movingPiece = null;
 
+    // false: white's turn, true: black's turn
+    private boolean turn = false;
+
     private String[] moveList;
 
     public Board() {
         board = buildBoard();
+    }
+
+    public boolean changeTurn() {
+        turn = !turn;
+        if(!turn) {
+            for(int i = 0; i < 8; i++) {
+                whitePawn[i].fixJustMoved();
+            }
+        } else {
+            for(int i = 0; i < 8; i++) {
+                blackPawn[i].fixJustMoved();
+            }
+        }
+        return turn;
     }
 
     public void printBoard() {
@@ -61,14 +78,24 @@ public class Board {
     /*
      * This method chooses a piece from the board (specifiec by a coordinate) and assigns it to movingPiece
      *  piece:  The corrdinate specified by the call to the piece
+     *  returns true if the color chosen is correct
      */
-    public void choosePiece(String piece) {
+    public boolean choosePiece(String piece) {
         int file = coordinateConvert(piece)[1];
         int rank = coordinateConvert(piece)[0];
 
         if(board[rank][file] != null) {
             movingPiece = board[rank][file];
         }
+
+        if(movingPiece.getColorInt() == 1 && !turn) {
+            return true;
+        } else if(movingPiece.getColorInt() == 0 && turn) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /*
@@ -120,6 +147,16 @@ public class Board {
     private void move(String input) {
         int file = coordinateConvert(input)[1];
         int rank = coordinateConvert(input)[0];
+
+        // case for en passant
+        if(board[rank][file].getPieceType() < 0 && movingPiece.getPieceType() == 8 && file != movingPiece.getLocX()) {
+            System.out.println("En Passant!");
+            if(movingPiece.getColor() == 0) {
+                board[movingPiece.getLocY()][file] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            } else {
+                board[movingPiece.getLocY()][file] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            }
+        }
 
         board[rank][file] = movingPiece;
         board[movingPiece.getLocY()][movingPiece.getLocX()] = new Piece(movingPiece.getLocY(), movingPiece.getLocX(), -1, 2);

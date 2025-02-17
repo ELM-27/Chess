@@ -9,9 +9,15 @@ public class Main {
         int moveNum = 1;
         boolean possibleMove;
         boolean gameOver = false;
+        boolean turn = false;
 
         while(!gameOver) {
-            System.out.print("Your Move #" + moveNum + " (H to help): ");
+            if(!turn) {
+                System.out.print("White, ");
+            } else {
+                System.out.print("Black, ");
+            }
+            System.out.print("your Move #" + moveNum + " (H to help): ");
             input = sc.nextLine();
 
             if(input.equals("E")) {
@@ -22,18 +28,22 @@ public class Main {
             } else if(input.equals("H")) {
                 help();
             } else {
-                chessBoard.choosePiece(input);
-                chessBoard.readPiece();
-                chessBoard.listMoves();
+                if(chessBoard.choosePiece(input)) {
+                    chessBoard.readPiece();
+                    chessBoard.listMoves();
             
-                System.out.print("Choose where to move: ");
-                input = sc.nextLine();
-                possibleMove = chessBoard.makeMove(input);
+                    System.out.print("Choose where to move: ");
+                    input = sc.nextLine();
+                    possibleMove = chessBoard.makeMove(input);
 
-                if(possibleMove) {
-                    System.out.println("Move made.");
+                    if(possibleMove) {
+                        System.out.println("Move made.");
+                        turn = chessBoard.changeTurn();
+                    } else {
+                        System.out.println("Not a possible move.");
+                    }
                 } else {
-                    System.out.println("Not a possible move.");
+                    System.out.println("Please choose a piece of your color.");
                 }
             }
 
