@@ -1,4 +1,5 @@
 
+
 public class Board {
     private Piece[][] board;
 
@@ -18,6 +19,8 @@ public class Board {
     private Piece[] blackPawn = new Piece[8];
 
     private Piece movingPiece = null;
+
+    private String[] moveList;
 
     public Board() {
         board = buildBoard();
@@ -81,23 +84,47 @@ public class Board {
     public void listMoves() {
         int i = 0;
 
-        String[] moveList = movingPiece.getMoves();
-        String move;
+        moveList = movingPiece.getMoves(board);
 
         System.out.print("Possible moves: ");
 
-        while (i < 26) { 
-            move = moveList[i];
-            if(!move.equals("end")) {
-                System.out.print(move + ", ");
-            } else {
-                break;
-            }
-
+        try{
+            while (i < 26) { 
+                if(!moveList[i + 1].equals("end")) {
+                    System.out.print(moveList[i] + ", ");
+                } else {
+                    System.out.println(moveList[i]);
+                    break;
+                }
             i++;
+            }
+        } catch(NullPointerException e) {
+            System.out.println("No possible moves.");
+        }
+    }
+
+    /*
+     * For choosing moves
+     */
+    public boolean makeMove(String input) {
+        for(int i = 0; i < 26; i++) {
+            if(input.equals(moveList[i])) {
+                move(moveList[i]);
+                return true;
+            }
         }
 
-        System.out.println();
+        return false;
+    }
+
+    private void move(String input) {
+        int file = coordinateConvert(input)[1];
+        int rank = coordinateConvert(input)[0];
+
+        board[rank][file] = movingPiece;
+        board[movingPiece.getLocY()][movingPiece.getLocX()] = new Piece(movingPiece.getLocY(), movingPiece.getLocX(), -1, 2);
+
+        movingPiece.makeMove(coordinateConvert(input));
     }
 
     /*
@@ -107,28 +134,28 @@ public class Board {
         Piece[][] newBoard = new Piece[8][8];
 
         for(int i = 0; i < 8; i++) {
-            white[i] = new Piece(i, 7, i, false);
+            white[i] = new Piece(i, 7, i, 1);
             newBoard[7][i] = white[i];
         }
 
         for(int i = 0; i < 8; i++) {
-            whitePawn[i] = new Piece(i, 6, 8, false);
+            whitePawn[i] = new Piece(i, 6, 8, 1);
             newBoard[6][i] = whitePawn[i];
         }
 
         for(int i = 0; i < 8; i++) {
             for(int j = 2; j < 6; j++) {
-                newBoard[j][i] = new Piece(i, j, -1, false);
+                newBoard[j][i] = new Piece(i, j, -1, 2);
             }
         }
 
         for(int i = 0; i < 8; i++) {
-            blackPawn[i] = new Piece(i, 1, 8, true);
+            blackPawn[i] = new Piece(i, 1, 8, 0);
             newBoard[1][i] = blackPawn[i];
         }
 
         for(int i = 0; i < 8; i++) {
-            black[i] = new Piece(i, 0, i, true);
+            black[i] = new Piece(i, 0, i, 0);
             newBoard[0][i] = black[i];
         }
 

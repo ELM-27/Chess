@@ -7,6 +7,7 @@ public class Main {
         String input;
 
         int moveNum = 1;
+        boolean possibleMove;
         boolean gameOver = false;
 
         while(!gameOver) {
@@ -24,6 +25,16 @@ public class Main {
                 chessBoard.choosePiece(input);
                 chessBoard.readPiece();
                 chessBoard.listMoves();
+            
+                System.out.print("Choose where to move: ");
+                input = sc.nextLine();
+                possibleMove = chessBoard.makeMove(input);
+
+                if(possibleMove) {
+                    System.out.println("Move made.");
+                } else {
+                    System.out.println("Not a possible move.");
+                }
             }
 
             System.out.println();
