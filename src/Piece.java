@@ -46,8 +46,8 @@ public class Piece {
     }
 
     public void makeMove(int[] coordinates) {
-        locX = coordinates[0];
-        locY = coordinates[1];
+        locX = coordinates[1];
+        locY = coordinates[0];
     }
 
     public int getLocX() {
