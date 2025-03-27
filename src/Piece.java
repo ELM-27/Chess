@@ -1,7 +1,4 @@
 
-
-
-
 public class Piece {
 
     private int locX;
@@ -76,8 +73,18 @@ public class Piece {
         return color;
     }
 
+    public boolean getHasMoved() {
+        return hasMoved;
+    }
+
     public boolean enPassant() {
         return hasJustMoved;
+    }
+
+    public void clearMoves() {
+        for(int i = 0; i < 26; i++) {
+            moveList[i] = "end";
+        }
     }
 
     public char getPiece() {
@@ -108,33 +115,105 @@ public class Piece {
      * The end of the list is terminated by the string "end"
      */
     public String[] getMoves(Piece[][] board) {
-        String[] tempMoveList;
+        String[] tempMoveList = new String[26];
         int tempLocX = locX;
         int tempLocY = locY;
         int moveNum = 0;
         int i = 0;
+
+        for(int j = 0; j < 26; j++) tempMoveList[j] = "end";
+
+        clearMoves();
         
         switch (type) {
             // case for Kings
             case 4:
-                
+                try {
+                    if(board[locY + 1][locX + 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX + 1, locY + 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY][locX + 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX + 1, locY);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY - 1][locX + 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX + 1, locY - 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY + 1][locX].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX, locY + 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY - 1][locX].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX, locY - 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY + 1][locX - 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX - 1, locY + 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY][locX - 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX - 1, locY);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                try {
+                    if(board[locY - 1][locX - 1].getColorInt() != color) {
+                        moveList[moveNum] = chessVector(locX - 1, locY - 1);
+                        moveNum++;
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {}
+
+                // kingside castle
+                if(!hasMoved && !board[locY][7].getHasMoved() && board[locY][6].getPieceType() < 0 && board[locY][5].getPieceType() < 0) {
+                    moveList[moveNum] = "o-o";
+                    moveNum++;
+                }
+
+                // queenside castle
+                if(!hasMoved && !board[locY][0].getHasMoved() && board[locY][1].getPieceType() < 0 && board[locY][2].getPieceType() < 0 && board[locY][3].getPieceType() < 0) {
+                    moveList[moveNum] = "o-o-o";
+                    moveNum++;
+                }
+
                 break;
             // case for Queens (combination of rook and bishop moves)
             case 3:
                 // calculates rook moves
                 type = 0;
-                tempMoveList = getMoves(board);
-                while(i < 26 && !tempMoveList[i].equals("end")) {
-                    moveList[moveNum] = tempMoveList[i];
+                getMoves(board);
+
+                // merge move lists
+                while(!moveList[moveNum].equals("end")) {
+                    tempMoveList[moveNum] = moveList[moveNum];
                     moveNum++;
-                    i++;
                 }
 
                 // calculates bishop moves
                 type = 2;
-                i = 0;
-                tempMoveList = getMoves(board);
-                while(moveNum < 26 && !tempMoveList[i].equals("end")) {
+                getMoves(board);
+
+                while(!tempMoveList[i].equals("end")) {
                     moveList[moveNum] = tempMoveList[i];
                     moveNum++;
                     i++;
@@ -158,7 +237,7 @@ public class Piece {
                     moveNum++;
 
                     // checks for pieces of the opposite color
-                    if(board[tempLocX][tempLocY].getPieceType() >= 0) {
+                    if(board[tempLocY][tempLocX].getColorInt() != 2) {
                         break;
                     }
                 } 
@@ -175,7 +254,7 @@ public class Piece {
                     moveNum++;
 
                     // checks for pieces of the opposite color
-                    if(board[tempLocY][tempLocX].getPieceType() >= 0) {
+                    if(board[tempLocY][tempLocX].getColorInt() != 2) {
                         break;
                     }
                 }
@@ -192,7 +271,7 @@ public class Piece {
                     moveNum++;
 
                     // checks for pieces of the opposite color
-                    if(board[tempLocY][tempLocX].getPieceType() >= 0) {
+                    if(board[tempLocY][tempLocX].getColorInt() != 2) {
                         break;
                     }
                 }
@@ -209,10 +288,23 @@ public class Piece {
                     moveNum++;
 
                     // checks for pieces of the opposite color
-                    if(board[tempLocY][tempLocX].getPieceType() >= 0) {
+                    if(board[tempLocY][tempLocX].getColorInt() != 2) {
                         break;
                     }
                 }
+
+                // kingside castle
+                if(!hasMoved && locX == 8 && !board[locY][4].getHasMoved() && board[locY][6].getPieceType() < 0 && board[locY][5].getPieceType() < 0) {
+                    moveList[moveNum] = "o-o";
+                    moveNum++;
+                }
+
+                // queenside castle
+                if(!hasMoved && locX == 0 && !board[locY][4].getHasMoved() && board[locY][1].getPieceType() < 0 && board[locY][2].getPieceType() < 0 && board[locY][3].getPieceType() < 0) {
+                    moveList[moveNum] = "o-o-o";
+                    moveNum++;
+                }
+
                 break;
             
             // case for Bishops
@@ -398,12 +490,12 @@ public class Piece {
                     if(board[locY - 1][locX].getPieceType() < 0) {  
                         moveList[moveNum] = chessVector(locX, locY - 1);
                         moveNum++;
-                    }
 
-                    // double move on first pawn move
-                    if(!hasMoved && board[locY - 2][locX].getPieceType() < 0){
-                        moveList[moveNum] = chessVector(locX, locY - 2);
-                        moveNum++;
+                        // double move on first pawn move
+                        if(!hasMoved && board[locY - 2][locX].getPieceType() < 0){
+                            moveList[moveNum] = chessVector(locX, locY - 2);
+                            moveNum++;
+                        }
                     }
 
                     // pawn capture checks
@@ -437,8 +529,6 @@ public class Piece {
                 
         }
 
-        moveList[moveNum] = "end";
-
         return moveList;
     }
 
@@ -463,12 +553,15 @@ public class Piece {
     public String toString() {
         String returnString = "";
 
-        if(color == 1) {
-            returnString = returnString.concat("White ");
-        } else if(color == 0) {
-            returnString = returnString.concat("Black ");
-        } else {
-            return "Empty Tile";
+        switch (color) {
+            case 1:
+                returnString = returnString.concat("White ");
+                break;
+            case 0:
+                returnString = returnString.concat("Black ");
+                break;
+            default:
+                return "Empty Tile";
         }
 
         switch (type) {

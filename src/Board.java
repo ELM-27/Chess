@@ -148,8 +148,54 @@ public class Board {
         int file = coordinateConvert(input)[1];
         int rank = coordinateConvert(input)[0];
 
+        // case for castling kingside
+        if(input.equals("o-o")) {
+            if(!turn) {
+                board[7][4].makeMove(coordinateConvert("g1"));
+                board[7][6] = board[7][4];
+                board[7][4] = new Piece(file, movingPiece.getLocY(), -1, 2);
+                System.out.print("K->g1");
+
+                board[7][7].makeMove(coordinateConvert("f1"));
+                board[7][5] = board[7][7];
+                board[7][7] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            } else {
+                board[0][4].makeMove(coordinateConvert("g8"));
+                board[0][6] = board[0][4];
+                board[0][4] = new Piece(file, movingPiece.getLocY(), -1, 2);
+                System.out.print("K->g8");
+
+                board[0][7].makeMove(coordinateConvert("f8"));
+                board[0][5] = board[0][7];
+                board[0][7] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            }
+            return;
+
+        // case for castling queenside
+        } else if(input.equals("o-o-o")) {
+            if(!turn) {
+                board[7][4].makeMove(coordinateConvert("c1"));
+                board[7][2] = board[7][4];
+                board[7][4] = new Piece(file, movingPiece.getLocY(), -1, 2);
+                System.out.print("K->c1");
+
+                board[7][0].makeMove(coordinateConvert("d1"));
+                board[7][3] = board[7][0];
+                board[7][0] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            } else {
+                board[0][4].makeMove(coordinateConvert("c8"));
+                board[0][2] = board[0][4];
+                board[0][4] = new Piece(file, movingPiece.getLocY(), -1, 2);
+                System.out.print("K->b1");
+
+                board[0][0].makeMove(coordinateConvert("d8"));
+                board[0][3] = board[0][0];
+                board[0][0] = new Piece(file, movingPiece.getLocY(), -1, 2);
+            }
+            return;
+            
         // case for en passant
-        if(board[rank][file].getPieceType() < 0 && movingPiece.getPieceType() == 8 && file != movingPiece.getLocX()) {
+        } else if(board[rank][file].getPieceType() < 0 && movingPiece.getPieceType() == 8 && file != movingPiece.getLocX()) {
             System.out.println("En Passant!");
             if(movingPiece.getColor() == 0) {
                 board[movingPiece.getLocY()][file] = new Piece(file, movingPiece.getLocY(), -1, 2);
